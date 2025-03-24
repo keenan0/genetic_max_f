@@ -20,9 +20,9 @@ public class GeneticHandler {
         first.fillSelectionIntervals();
 
         // Printing the initial generation
-        first.print_initial();
-        first.print_selection_probabilities();
-        first.print_selection_intervals();
+        //first.print_initial();
+        //first.print_selection_probabilities();
+        //first.print_selection_intervals();
     }
 
     public void evolve() {
@@ -38,5 +38,7 @@ public class GeneticHandler {
                     it.getFitnessSum()
             );
         }
+
+        System.out.println("Finished evolving.");
     }
 }

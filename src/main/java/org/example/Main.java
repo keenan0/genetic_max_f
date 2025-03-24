@@ -1,7 +1,6 @@
 package org.example;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
 class GeneticIterator {
@@ -53,7 +52,7 @@ class GeneticIterator {
             this.chromosomes.add(new Chromosome(ch));
         }
 
-        this.selection_probability_intervals = new ArrayList<>(other.selection_probability_intervals);
+        this.selection_probability_intervals = new ArrayList<>();
         this.fitness_sum = 0;
     }
 
@@ -103,6 +102,7 @@ class GeneticIterator {
                             i + 1
                     );
                 }
+
                 this.chromosomes.get(i).mutate();
             }
         }
@@ -138,7 +138,7 @@ class GeneticIterator {
 
             if(initial) {
                 String format = "Crossover between: chromosome %" + Utils.n_digits(this.n_chromosomes) + "s and chromosome %" + Utils.n_digits(this.n_chromosomes) + "s\n";
-                System.out.printf(format, ch1.getId(), ch2.getId());
+                System.out.printf(format, ch1.getId() + 1, ch2.getId() + 1);
             }
 
             OneCrossoverOperator op = new OneCrossoverOperator();
@@ -151,6 +151,11 @@ class GeneticIterator {
             }
 
             int[] indices = op.crossover(ch1, ch2);
+
+            // Move this functionality to other class
+            ch1.setValue(this.codificator.from(ch1.getValueBin()));
+            ch2.setValue(this.codificator.from(ch2.getValueBin()));
+
             if(initial) {
                 System.out.printf(
                         "%d\n",
@@ -184,13 +189,37 @@ class GeneticIterator {
         return (left > 0) ? left - 1 : 0;
     }
 
+    private Chromosome getBestChromosome() {
+        Chromosome ans = this.chromosomes.get(0);
+
+        for(int i = 0; i < n_chromosomes; ++i) {
+            if(this.chromosomes.get(i).getFitness() > ans.getFitness()) {
+                ans = this.chromosomes.get(i);
+            }
+        }
+
+        ans = new Chromosome(ans);
+        ans.setId(0);
+        return ans;
+    }
+
     public GeneticIterator getNext() {
         boolean initial = this.iteration_id == 1;
         GeneticIterator next = new GeneticIterator(this);
 
         if(initial) System.out.println("Selection Phase:");
 
-        for(int i = 0; i < this.n_chromosomes; i++) {
+        // Elitism to keep the best chromosome always
+        boolean elitism = true;
+
+        int k = 0;
+        if(elitism) {
+            Chromosome best_chromosome = getBestChromosome();
+            next.chromosomes.set(0, best_chromosome);
+            k = 1;
+        }
+
+        for(int i = k; i < this.n_chromosomes; i++) {
             double u = rd.nextDouble();
             int idx = binarySearchIntervals(u);
 
@@ -210,12 +239,13 @@ class GeneticIterator {
 
         if(initial) System.out.println();
 
+        next.crossover();
+        next.fillFitness();
+
+        next.mutate();
         next.fillFitness();
         next.fillSelectionProbabilities();
         next.fillSelectionIntervals();
-
-        next.crossover();
-        next.mutate();
 
         return next;
     }
@@ -256,6 +286,7 @@ class GeneticIterator {
     }
 
     public void fillFitness() {
+        this.fitness_sum = 0;
         for(int i = 0; i < n_chromosomes; i++) {
             double fitness = this.f(this.chromosomes.get(i).getValue());
             this.fitness_sum += fitness;
@@ -318,6 +349,19 @@ class GeneticIterator {
         }
 
         System.out.println();
+    }
+
+    public void print() {
+        String fp = "C:\\Users\\tumbr\\IdeaProjects\\aoc\\src\\main\\java\\org\\example\\out.txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fp))) {
+            for(int i = 0; i < n_chromosomes; i++) {
+                writer.write(this.chromosomes.get(i).toString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

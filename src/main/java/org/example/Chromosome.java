@@ -44,13 +44,31 @@ public class Chromosome {
 
     public void mutate() {
         Random rd = new Random();
-        int idx = rd.nextInt(0, value_bin.length());
-
         StringBuilder sb = new StringBuilder(this.value_bin);
-        if(sb.charAt(idx) == '0') {
+
+        int idx = rd.nextInt(0, sb.length());
+
+        if (sb.charAt(idx) == '0') {
             sb.setCharAt(idx, '1');
         } else {
             sb.setCharAt(idx, '0');
+        }
+    }
+
+    public void mutate(double mutation_p) {
+        Random rd = new Random();
+        StringBuilder sb = new StringBuilder(this.value_bin);
+
+        for(int j = 0; j < sb.length(); j++) {
+            double u = rd.nextDouble();
+
+            if(u < mutation_p){
+                if (sb.charAt(j) == '0') {
+                    sb.setCharAt(j, '1');
+                } else {
+                    sb.setCharAt(j, '0');
+                }
+            }
         }
     }
 
@@ -59,6 +77,7 @@ public class Chromosome {
     public void setId(int id) {if(id < 0) {id = 0;} this.id = id;}
 
     public double getValue() {return this.value;}
+    public void setValue(double value) {this.value = value;}
 
     public String getValueBin() {return this.value_bin;}
     public void setValueBin(String bin) {
