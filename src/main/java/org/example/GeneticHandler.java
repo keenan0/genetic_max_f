@@ -1,14 +1,26 @@
 package org.example;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class GeneticHandler {
-    private ArrayList<GeneticIterator> iterations;
+    private ArrayList<GeneticIterator> iterations = new ArrayList<>();
     private int n_iterations;
+    public static PrintWriter pw;
+
+    static {
+        try {
+            pw = new PrintWriter("C:\\Users\\tumbr\\IdeaProjects\\aoc\\output.txt");
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     GeneticHandler(GeneticIterator it, int n_iterations) {
         this.n_iterations = n_iterations;
-        this.iterations = new ArrayList<>();
         this.iterations.add(it);
 
         GeneticIterator first = this.iterations.get(0);
@@ -20,25 +32,49 @@ public class GeneticHandler {
         first.fillSelectionIntervals();
 
         // Printing the initial generation
-        //first.print_initial();
-        //first.print_selection_probabilities();
-        //first.print_selection_intervals();
+        first.print_initial();
+        first.print_selection_probabilities();
+        first.print_selection_intervals();
     }
 
     public void evolve() {
+        GeneticIterator it = this.iterations.get(0);
+        System.out.printf(
+                "id=%3s   f=%12.8f mean=%12.8f sum=%12.8f mutations=%d\n",
+                it.getId(),
+                it.maxFitness(),
+                it.meanFitness(),
+                it.getFitnessSum(),
+                it.getMutations()
+        );
+
         for(int i = 1; i < n_iterations; ++i) {
-            GeneticIterator it = this.iterations.get(i - 1).getNext();
+            it = this.iterations.get(i - 1).getNext();
 
             this.iterations.add(it);
 
             System.out.printf(
-                    "f=%12.8f mean=%12.8f sum=%12.8f\n",
+                    "id=%3s   f=%12.8f mean=%12.8f sum=%12.8f mutations=%d\n",
+                    it.getId(),
                     it.maxFitness(),
                     it.meanFitness(),
-                    it.getFitnessSum()
+                    it.getFitnessSum(),
+                    it.getMutations()
             );
         }
 
         System.out.println("Finished evolving.");
+
+        double init = this.iterations.get(0).maxFitness();
+        double fin = this.iterations.get(this.n_iterations - 1).maxFitness();
+        String growth = "/!\\ The population evolved from %f to %f with a growth of %f.\n";
+        System.out.printf(
+                growth,
+                init,
+                fin,
+                fin - init
+        );
+
+        pw.flush();
     }
 }

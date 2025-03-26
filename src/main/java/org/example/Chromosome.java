@@ -53,7 +53,37 @@ public class Chromosome {
         } else {
             sb.setCharAt(idx, '0');
         }
+
+        this.setValueBin(sb.toString());
     }
+//    public void mutate() {
+//        Random rd = new Random();
+//        StringBuilder sb = new StringBuilder(this.value_bin);
+//
+//        int idx = rd.nextInt(sb.length());
+//        if (sb.charAt(idx) == '0') {
+//            sb.setCharAt(idx, '1');
+//        } else {
+//            sb.setCharAt(idx, '0');
+//        }
+//
+//        if (rd.nextDouble() < 0.1) {
+//            int secondIdx = rd.nextInt(sb.length());
+//
+//            if (rd.nextDouble() < 0.7) {
+//                secondIdx = rd.nextInt(sb.length() / 2);
+//            }
+//
+//            if (sb.charAt(secondIdx) == '0') {
+//                sb.setCharAt(secondIdx, '1');
+//            } else {
+//                sb.setCharAt(secondIdx, '0');
+//            }
+//        }
+//
+//        this.value_bin = sb.toString();
+//        this.value = Codificator.from(this.value_bin);
+//    }
 
     public void mutate(double mutation_p) {
         Random rd = new Random();
@@ -74,18 +104,31 @@ public class Chromosome {
 
     // Getters and Setters
     public int getId() {return this.id;}
-    public void setId(int id) {if(id < 0) {id = 0;} this.id = id;}
+    public void setId(int id) {
+        if(id < 0) {id = 0;}
+        this.id = id;
+    }
 
     public double getValue() {return this.value;}
-    public void setValue(double value) {this.value = value;}
+    public void setValue(double value) {
+        this.value = value;
+        this.value_bin = Codificator.to(value);
+        this.fitness = 0;
+        this.selection_probability = 0;
+    }
 
     public String getValueBin() {return this.value_bin;}
     public void setValueBin(String bin) {
         this.value_bin = bin;
+        this.value = Codificator.from(bin);
+        this.fitness = 0;
+        this.selection_probability = 0;
     }
 
     public double getFitness() {return this.fitness;}
-    public void setFitness(double fitness) {this.fitness = fitness;}
+    public void setFitness(double fitness) {
+        this.fitness = fitness;
+    }
 
     public double getSelectionP() {return this.selection_probability;}
     public void setSelectionP(double prob) {

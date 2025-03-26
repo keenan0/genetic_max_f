@@ -1,13 +1,13 @@
 package org.example;
 
 public class Codificator {
-    private final double lowerBound;
-    private final double upperBound;
+    private static double lowerBound;
+    private static double upperBound;
 
-    private final double precision;
+    private static double precision;
 
-    private final int hashedBits;
-    private final double bucketLength;
+    private static int hashedBits;
+    private static double bucketLength;
 
     Codificator(GeneticIteratorBuilder b) {
         this.lowerBound = b.lowerBound;
@@ -17,7 +17,7 @@ public class Codificator {
         this.bucketLength = b.bucketLength;
     }
 
-    private int binToDec(String bin) {
+    private static int binToDec(String bin) {
         int power = 1, dec = 0;
 
         for(int i = bin.length() - 1; i >= 0 && i >= (bin.length() - hashedBits); --i) {
@@ -30,14 +30,14 @@ public class Codificator {
         return dec;
     }
 
-    public double from(String bin) {
+    public static double from(String bin) {
         int dec = binToDec(bin);
         double num = bucketLength * dec + lowerBound;
 
         return num;
     }
 
-    private String decToBin(int val) {
+    private static String decToBin(int val) {
         StringBuilder sb = new StringBuilder();
 
         if(val >= Math.pow(2, hashedBits)) {
@@ -59,15 +59,15 @@ public class Codificator {
         return sb.toString();
     }
 
-    public String to(double val) {
+    public static String to(double val) {
         double transformed = (val - lowerBound) / bucketLength;
         String bin = decToBin((int)Math.round(transformed));
 
         return bin;
     }
 
-    public double getLowerBound() {return this.lowerBound;}
-    public double getUpperBound() {return this.upperBound;}
-    public double getPrecision() {return this.precision;}
-    public int getHashedBits() {return this.hashedBits;}
+    public static double getLowerBound() {return lowerBound;}
+    public static double getUpperBound() {return upperBound;}
+    public static double getPrecision() {return precision;}
+    public static int getHashedBits() {return hashedBits;}
 }
