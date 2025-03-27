@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    public static String file_path = "C:\\Users\\tumbr\\IdeaProjects\\aoc\\src\\main\\java\\org\\example\\data.in";
+    public static String file_path = "data.in";
 
     private static int n_chromosomes;
     private static double lower_bound, upper_bound, a, b, c;
@@ -44,6 +44,8 @@ public class Main {
             GeneticHandler handler = new GeneticHandler(it, n_iterations);
 
             handler.evolve();
+
+            new MainFrame(handler);
         } catch(FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

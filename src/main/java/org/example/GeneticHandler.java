@@ -10,6 +10,7 @@ public class GeneticHandler {
     private ArrayList<GeneticIterator> iterations = new ArrayList<>();
     private int n_iterations;
     public static PrintWriter pw;
+    private int current_iteration = 0;
 
     static {
         try {
@@ -35,6 +36,45 @@ public class GeneticHandler {
         first.print_initial();
         first.print_selection_probabilities();
         first.print_selection_intervals();
+    }
+
+    public void reset() {
+        GeneticIterator.reset();
+
+        GeneticIterator first = this.iterations.get(0);
+        first.fillChromosomes();
+        first.fillFitness();
+        first.fillSelectionProbabilities();
+        first.fillSelectionIntervals();
+
+        for(int i = 1; i < n_iterations; ++i) {
+            GeneticIterator it = this.iterations.get(i - 1).getNext();
+            this.iterations.set(i, it);
+        }
+    }
+
+    public GeneticIterator getCurrentIterator() {
+        return this.iterations.get(current_iteration);
+    }
+
+    public boolean hasNext() {
+        return this.current_iteration < this.n_iterations - 1;
+    }
+
+    public boolean hasPrevious() {
+        return this.current_iteration > 0;
+    }
+
+    public void nextIterator() {
+        if(this.current_iteration < this.n_iterations - 1) {
+            this.current_iteration++;
+        }
+    }
+
+    public void previousIterator() {
+        if(this.current_iteration > 0) {
+            this.current_iteration--;
+        }
     }
 
     public void evolve() {
@@ -76,5 +116,11 @@ public class GeneticHandler {
         );
 
         pw.flush();
+    }
+
+    public GeneticIterator getIterator(int index) {
+        if(0 <= index && index < this.n_iterations)
+            return this.iterations.get(index);
+        return null;
     }
 }

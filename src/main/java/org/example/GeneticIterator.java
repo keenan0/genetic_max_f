@@ -1,6 +1,9 @@
 package org.example;
 
-import java.io.*;
+import org.example.crossover.OneCrossoverOperator;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.*;
 
 public class GeneticIterator {
@@ -53,6 +56,10 @@ public class GeneticIterator {
 
         this.selection_probability_intervals = new ArrayList<>();
         this.fitness_sum = 0;
+    }
+
+    public static void reset() {
+        n_iterations = 1;
     }
 
     public double getFitnessSum() {
@@ -258,11 +265,30 @@ public class GeneticIterator {
         return (this.fitness_sum / this.n_chromosomes);
     }
 
-    private double f(double x) {
+    public double f(double x) {
         return (this.a * x * x + this.b * x + this.c);
     }
 
+    public ArrayList<Point2D.Double> getPoints() {
+        ArrayList<Point2D.Double> points = new ArrayList<>();
+
+        for(int i = 0; i < this.n_chromosomes; ++i) {
+            Point2D.Double p = new Point2D.Double(
+                    this.chromosomes.get(i).getValue(),
+                    this.chromosomes.get(i).getFitness()
+            );
+
+            points.add(p);
+        }
+
+        return points;
+    }
+
     public void fillChromosomes() {
+        for(int i = 0; i < n_chromosomes; ++i) {
+            this.chromosomes.add(new Chromosome(0, 0, "0", 0, 0));
+        }
+
         for(int i = 0; i < n_chromosomes; i++) {
             double chromosome_x = rd.nextDouble(Codificator.getLowerBound(), Codificator.getUpperBound());
 
@@ -273,7 +299,7 @@ public class GeneticIterator {
                     0.0,
                     0.0);
 
-            this.chromosomes.add(c);
+            this.chromosomes.set(i, c);
         }
     }
 
