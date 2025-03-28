@@ -24,7 +24,7 @@ public class GeneticIterator {
 
     private double crossover_probability;
     private double mutation_probability;
-    private boolean elitism = true;
+    private boolean elitism = false;
 
     {
         this.iteration_id = n_iterations++;

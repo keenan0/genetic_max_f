@@ -3,6 +3,8 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 public class MainFrame extends JFrame {
     private GeneticHandler handler;
@@ -49,6 +51,13 @@ public class MainFrame extends JFrame {
         drawFullGraphButton.addActionListener(e -> drawFullGraph());
         resetButton.addActionListener(e -> reset());
 
+        addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                handleScroll(e);
+            }
+        });
+
         Action prevAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -74,6 +83,14 @@ public class MainFrame extends JFrame {
 
         updateButtonStates();
         this.setVisible(true);
+    }
+
+    private void handleScroll(MouseWheelEvent e) {
+        if (e.getWheelRotation() < 0) {
+            graphPanel.updateScale(1);
+        } else {
+            graphPanel.updateScale(-1);
+        }
     }
 
     private void reset() {
