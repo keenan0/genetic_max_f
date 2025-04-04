@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+
     public static String file_path = "data.in";
 
     private static int n_chromosomes;
